@@ -31,9 +31,10 @@
      */
     var paramsObj = function (selectedParamsArray, url) {
         var paramVal = getParamVal(url),
+            count = selectedParamsArray.length,
             i, obj = {};
 
-        for (i = selectedParamsArray.length; i > 0; i--) {
+        for (i = count; i > 0; i--) {
             obj[i] = paramVal(selectedParamsArray[i]);
         }
 
@@ -48,8 +49,8 @@
      * @return {Node}
      */
     var buildPandoraIMG = function (paramsObject) {
-        var ord = ord || Math.random() * 10000000000000000,
-            img = document.createElement('img'),
+        var img = document.createElement('img'),
+            ord = ord || Math.random() * 10000000000000000,
             src = '//stats.pandora.com/tracking/' + ord + '/type::ad_tracking_pixel/ctype::sampleadvertiser/etype::conversion/';
         src += 'oid::[' + paramsObject.oid + ']/aid::[' + paramsObject.aid + ']/cid::[' + paramsObject.cid + ']';
 
