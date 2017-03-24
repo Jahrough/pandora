@@ -1,4 +1,4 @@
-(function () {
+(function (document, window) {
     'use strict';
 
     /*
@@ -19,6 +19,7 @@
             return ((results === null) ? '' : decodeURIComponent(results[1].replace(/\+/g, ' ')));
         };
     };
+
 
 
     /*
@@ -44,29 +45,38 @@
      * @method - buildPandoraIMG
      * @description - build pandora image
      * @param {object} paramsObject
-     * @return {string}
+     * @return {Node}
      */
     var buildPandoraIMG = function (paramsObject) {
         var ord = ord || Math.random() * 10000000000000000,
+            img = document.createElement('img'),
             src = '//stats.pandora.com/tracking/' + ord + '/type::ad_tracking_pixel/ctype::sampleadvertiser/etype::conversion/';
+        src += 'oid::[' + paramsObject.oid + ']/aid::[' + paramsObject.aid + ']/cid::[' + paramsObject.cid + ']';
 
-        if (typeof paramsObject === 'object' && paramsObject.hasOwnProperty('oid') && paramsObject.hasOwnProperty('aid') && paramsObject.hasOwnProperty('cid')) {
-            src += 'oid::[' + paramsObject.oid + ']/aid::[' + paramsObject.aid + ']/cid::[' + paramsObject.cid + ']';
-        }
-
-        return '<img src="' + src + '">';
+        return img.setAttribute('src', src);
     };
 
 
 
+    /*
+     * @method - init
+     * @description - Initialize Pandora tracking image
+     * @return {undefined}
+     */
+    var init = (function () {
+        var OptionalURL = '//crossinternational.org/pandora?oid=257797336&aid=96974776&cid=30959773216',
+            selectedParamsArray = ['oid', 'aid', 'cid'],
+            params = paramsObj(selectedParamsArray, OptionalURL),
+            img;
 
-    var OptionalURL = 'http://crossinternational.org/pandora?oid=257797336&aid=96974776&cid=30959773216',
-        selectedParamsArray = ['oid', 'aid', 'cid'],
-        params = paramsObj(selectedParamsArray, OptionalURL),
-        img = buildPandoraIMG(params);
+        if ((typeof params === 'object') && params.hasOwnProperty('oid') && params.hasOwnProperty('aid') && params.hasOwnProperty('cid')) {
+            img = buildPandoraIMG(params);
+            document.body.appendChild(img);
+        }
 
-    document.write(img);
+    }());
 
 
 
-}());
+
+}(document, window));
