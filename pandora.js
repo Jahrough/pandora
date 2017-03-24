@@ -1,4 +1,8 @@
-(function (document, window) {
+/*
+ * @method - pandoraTrackIMG
+ * @description - Pandora tracking image
+ */
+var pandoraTrackIMG = (function (document, window) {
     'use strict';
 
     /*
@@ -12,15 +16,13 @@
         url = url || window.location.search;
 
         return function (param) {
-            var name = param.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
-                regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
-                results = regex.exec(url);
+            var name = param.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(url);
 
             return ((results === null) ? '' : decodeURIComponent(results[1].replace(/\+/g, ' ')));
         };
     };
-
-
 
     /*
      * @method - paramsObj
@@ -30,9 +32,10 @@
      * @return {object}
      */
     var paramsObj = function (selectedParamsArray, url) {
-        var paramVal = getParamVal(url),
-            count = selectedParamsArray.length,
-            i, obj = {};
+        var paramVal = getParamVal(url);
+        var count = (Array.isArray('selectedParamsArray') ? selectedParamsArray.length : 0);
+        var obj = {};
+        var i;
 
         for (i = count; i > 0; i--) {
             obj[i] = paramVal(selectedParamsArray[i]);
@@ -41,7 +44,6 @@
         return obj;
     };
 
-
     /*
      * @method - buildPandoraIMG
      * @description - build pandora image
@@ -49,35 +51,37 @@
      * @return {Node}
      */
     var buildPandoraIMG = function (paramsObject) {
-        var img = document.createElement('img'),
-            ord = ord || Math.random() * 10000000000000000,
-            src = '//stats.pandora.com/tracking/' + ord + '/type::ad_tracking_pixel/ctype::sampleadvertiser/etype::conversion/';
+        var img = document.createElement('img');
+        var uniqueKey = ord || Math.random() * 10000000000000000;
+        var src = '//stats.pandora.com/tracking/' + uniqueKey + '/type::ad_tracking_pixel/ctype::sampleadvertiser/etype::conversion/';
         src += 'oid::[' + paramsObject.oid + ']/aid::[' + paramsObject.aid + ']/cid::[' + paramsObject.cid + ']';
 
         return img.setAttribute('src', src);
     };
-
-
 
     /*
      * @method - init
      * @description - Initialize Pandora tracking image
      * @return {undefined}
      */
-    var init = (function () {
-        var OptionalURL = '//crossinternational.org/pandora?oid=257797336&aid=96974776&cid=30959773216',
-            selectedParamsArray = ['oid', 'aid', 'cid'],
-            params = paramsObj(selectedParamsArray, OptionalURL),
-            img;
+    var init = function () {
+        var OptionalURL = '//crossinternational.org/pandora?oid=257797336&aid=96974776&cid=30959773216';
+        var selectedParamsArray = ['oid', 'aid', 'cid'];
+        var params = paramsObj(selectedParamsArray, OptionalURL);
 
         if ((typeof params === 'object') && params.hasOwnProperty('oid') && params.hasOwnProperty('aid') && params.hasOwnProperty('cid')) {
-            img = buildPandoraIMG(params);
-            document.body.appendChild(img);
+            document.body.appendChild(buildPandoraIMG(params));
         }
+    };
 
-    }());
-
-
-
+    return function () {
+        init();
+    };
 
 }(document, window));
+
+
+
+
+// Initialize Pandora tracking image
+pandoraTrackIMG();
