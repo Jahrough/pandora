@@ -50,7 +50,7 @@
         var ord = ord || Math.random() * 10000000000000000,
             src = '//stats.pandora.com/tracking/' + ord + '/type::ad_tracking_pixel/ctype::sampleadvertiser/etype::conversion/';
 
-        if (typeof paramsObject === 'object') {
+        if (typeof paramsObject === 'object' && paramsObject.hasOwnProperty('oid') && paramsObject.hasOwnProperty('aid') && paramsObject.hasOwnProperty('cid')) {
             src += 'oid::[' + paramsObject.oid + ']/aid::[' + paramsObject.aid + ']/cid::[' + paramsObject.cid + ']';
         }
 
